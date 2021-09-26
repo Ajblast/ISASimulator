@@ -4,14 +4,15 @@ namespace Simulator.Instructions.control
 {
 	public class halt : Instruction
 	{
-		public halt()
+        private Register haltRegister;
+		public halt(Register halt)
 		{
-
+            this.haltRegister = halt;
 		}
 
         public override void Execute()
         {
-            throw new System.NotImplementedException();
+            haltRegister.Value = 1;
         }
     }
 

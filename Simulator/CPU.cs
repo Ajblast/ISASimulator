@@ -9,7 +9,9 @@ namespace Simulator
 		private Fetcher fetcher;		// The instruction fetcher
 		private Decoder decoder;		// The instruction decoder
 		private Executor executor;		// The instruction executor
-		private Registers registers;	// The registers
+		private Registers registers;    // The registers
+		private ALU alu;
+		public Register halt= new Register();
 
 		// A CPU is created knowing what the memory is
 		public CPU(Memory memory)
@@ -20,8 +22,10 @@ namespace Simulator
 			// Create the fetcher
 			fetcher = new Fetcher(registers.PC, memory);
 
+			alu = new ALU(registers.FLAG);
+
 			// Create the decoder
-			decoder = new Decoder(fetcher, registers, memory);
+			decoder = new Decoder(fetcher, registers, memory, alu, halt);
 
 			// Create the executor
 			executor = new Executor();
@@ -30,6 +34,8 @@ namespace Simulator
 		// Run a clock cycle
 		public void RunClockCycle()
 		{
+            if (halt.Value != 0)
+				return;
 			// Fetch from memory
 			ushort encodedInstruction = fetcher.Fetch();
 
