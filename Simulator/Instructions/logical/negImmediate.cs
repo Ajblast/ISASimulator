@@ -5,7 +5,7 @@ namespace Simulator.Instructions.logical
 {
     public class negImmediate : Instruction
     {
-        public negImmediate(Register dest, ushort imm, Register flag)
+        public negImmediate(Register dest, ushort imm, Register flag, ALU alu)
         {
 
         }

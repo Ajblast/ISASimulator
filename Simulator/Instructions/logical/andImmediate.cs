@@ -5,7 +5,7 @@ namespace Simulator.Instructions.logical
 {
 	public class andImmediate : Instruction
 	{
-		public andImmediate(Register dest, Register op1, ushort imm, Register flag)
+		public andImmediate(Register dest, Register op1, ushort imm, Register flag, ALU alu)
 		{
 
 		}

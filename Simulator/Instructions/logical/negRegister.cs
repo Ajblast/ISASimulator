@@ -5,7 +5,7 @@ namespace Simulator.Instructions.logical
 {
     public class negRegister : Instruction
     {
-        public negRegister(Register dest, Register op1, Register flag)
+        public negRegister(Register dest, Register op1, Register flag, ALU alu)
         {
 
         }

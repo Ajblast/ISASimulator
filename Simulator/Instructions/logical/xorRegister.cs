@@ -5,7 +5,7 @@ namespace Simulator.Instructions.logical
 {
     public class xorRegister : Instruction
     {
-        public xorRegister(Register dest, Register op1, Register op2, Register flag)
+        public xorRegister(Register dest, Register op1, Register op2, Register flag, ALU alu)
         {
 
         }
