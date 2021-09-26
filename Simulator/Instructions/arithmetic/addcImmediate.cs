@@ -24,7 +24,7 @@ namespace Simulator.Instructions.arithmetic
         {
             // Set the op values;
             alu.op1.Value = op1.Value;
-            alu.op2.Value = (short) op2;
+            alu.op2.Value = op2;
 
             // Add the values
             alu.Add();

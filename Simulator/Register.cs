@@ -4,7 +4,7 @@ namespace Simulator
 	public class Register
 	{
 		// The bits of the register
-		public short Value;
+		public ushort Value;
 	}
 
 }

@@ -28,23 +28,11 @@ namespace Simulator.Instructions.arithmetic
             alu.op2.Value = 0;
             alu.Add();
 
-
-            //// -(OP2 + CF)
-            //// Negate the result
-            //alu.op1.Value = alu.dest.Value;
-            //alu.Neg();
-            //// And add 1
-            //flag.Value = (short)(flag.Value & ~(1 << 0) | 0);
-            //alu.op1.Value = alu.dest.Value;
-            //alu.op2.Value = 1;
-            //alu.Add();
-
-
             // OP1 - (OP2 + CF)
-            // Add the first op and the result of the carry
+            // Sub the first op and the result of the carry addition
             alu.op1.Value = op1.Value;
             alu.op2.Value = alu.dest.Value;
-            flag.Value = (short)(flag.Value & ~(1 << 0) | 0);
+            flag.Value = (ushort)(flag.Value & ~(1 << 0) | 0);
             alu.Sub();
 
             // Get the result from the alu

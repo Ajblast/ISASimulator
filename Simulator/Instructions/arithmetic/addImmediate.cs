@@ -23,11 +23,11 @@ namespace Simulator.Instructions.arithmetic
         public override void Execute()
         {
             // The carry in is always 0
-            flag.Value = (short)(flag.Value & ~(1 << 0) | 0);
+            flag.Value = (ushort)(flag.Value & ~(1 << 0) | 0);
 
             // Set the op values;
             alu.op1.Value = op1.Value;
-            alu.op2.Value = (short) op2;
+            alu.op2.Value = op2;
 
             // Add the values
             alu.Add();
