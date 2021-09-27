@@ -10,8 +10,9 @@ namespace Simulator
 		private Decoder decoder;		// The instruction decoder
 		private Executor executor;		// The instruction executor
 		private Registers registers;    // The registers
-		private ALU alu;
-		public Register halt= new Register();
+		private ALU alu;				// The AlU
+
+		public Register halt= new Register();	// Private register that holds a value to know whether the computer has halted.
 
 		// A CPU is created knowing what the memory is
 		public CPU(Memory memory)
@@ -36,6 +37,7 @@ namespace Simulator
 		{
             if (halt.Value != 0)
 				return;
+
 			// Fetch from memory
 			ushort encodedInstruction = fetcher.Fetch();
 

@@ -25,7 +25,6 @@ namespace Simulator
 				return this[4];
 			}
 		}
-
 		// Get rF register
 		public Register RF
 		{
@@ -34,7 +33,6 @@ namespace Simulator
 				return this[5];
 			}
 		}
-
 		// Get the program counter
 		public Register PC
         {
