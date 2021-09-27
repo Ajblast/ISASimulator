@@ -9,8 +9,8 @@ namespace Simulator
 		private Fetcher fetcher;		// The instruction fetcher
 		private Decoder decoder;		// The instruction decoder
 		private Executor executor;		// The instruction executor
-		private Registers registers;    // The registers
-		private ALU alu;				// The AlU
+		public Registers registers;    // The registers
+		public ALU alu;				// The AlU
 
 		public Register halt= new Register();	// Private register that holds a value to know whether the computer has halted.
 
@@ -19,7 +19,6 @@ namespace Simulator
 		{
 			// Create the registers
 			registers = new Registers();
-
 			// Create the fetcher
 			fetcher = new Fetcher(registers.PC, memory);
 

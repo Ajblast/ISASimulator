@@ -8,6 +8,14 @@ namespace Simulator
 		// The registers
 		private Register[] regs = new Register[16];
 
+		public Registers()
+        {
+            for (int i = 0; i < 16; i++)
+            {
+				regs[i] = new Register();
+            }
+        }
+
 		// Get a register
 		public Register this[int index]
 		{
@@ -24,6 +32,7 @@ namespace Simulator
 			{
 				return this[4];
 			}
+
 		}
 		// Get rF register
 		public Register RF

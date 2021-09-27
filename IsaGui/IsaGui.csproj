@@ -79,5 +79,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Simulator\Simulator.csproj">
+      <Project>{8727e1fe-6c2b-4ea0-afd6-0f57e44ae27b}</Project>
+      <Name>Simulator</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
