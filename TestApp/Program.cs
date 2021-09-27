@@ -128,6 +128,12 @@ namespace TestApp
             Console.WriteLine("Neg reg {0:X4} = {1:X4}, FLAGS {2:X}", op1.Value, dest.Value, flag.Value);
 
 
+            // Test LDA
+            uint immLDA = 0x0003F3F3;
+            lda lda = new lda(op1, op2, immLDA);
+            lda.Execute();
+
+            Console.WriteLine("LDA imm {0:X8} = {1:X4}{2:X4}", immLDA, op1.Value, op2.Value);
         }
     }
 }
