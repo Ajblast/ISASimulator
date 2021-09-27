@@ -4,12 +4,15 @@ namespace Simulator
 	public class Memory
 	{
 		private byte[] TheWholeNineYards;
+		bool bigEndian;
 
 		// Create a new memory
-		public Memory(int size)
+		public Memory(int size, bool bigEndian)
         {
 			// Create the byte array
 			TheWholeNineYards = new byte[size];
+
+			this.bigEndian = bigEndian;
         }
 
 		// Index into the whole nine yards
@@ -21,10 +24,18 @@ namespace Simulator
 				return (ushort)((TheWholeNineYards[index] << 8) | TheWholeNineYards[index + 1]);
 			}
 			set
-            {
+			{
 				// Set the individual bytes
-				TheWholeNineYards[index] = (byte) ((value & 0xFF00) >> 8);
-				TheWholeNineYards[index+1] = (byte) (value & 0x00FF);
+				if (bigEndian)
+				{
+					TheWholeNineYards[index] = (byte)((value & 0xFF00) >> 8);
+					TheWholeNineYards[index + 1] = (byte)(value & 0x00FF);
+				}
+				else
+                {
+					TheWholeNineYards[index + 1] = (byte)((value & 0xFF00) >> 8);
+					TheWholeNineYards[index] = (byte)(value & 0x00FF);
+                }
             }
 		}
 
