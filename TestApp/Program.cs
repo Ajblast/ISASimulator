@@ -1,6 +1,7 @@
 ﻿using System;
 using Simulator;
 using Simulator.Instructions.arithmetic;
+using Simulator.Instructions.logical;
 
 namespace TestApp
 {
@@ -103,6 +104,29 @@ namespace TestApp
             rolcRegister rolc = new rolcRegister(dest, op1, op2, flag, alu);
             rolc.Execute();
             Console.WriteLine("Rolc reg {0:X4} and reg {1:X4} = {2:X4}, FLAGS {3:X}", op1.Value, op2.Value, dest.Value, flag.Value);
+
+            // Test Logical
+            Console.WriteLine();
+            op1.Value = 0x0F0F;
+            op2.Value = 0x03F3;
+
+            andRegister and = new andRegister(dest, op1, op2, flag, alu);
+            orRegister or = new orRegister(dest, op1, op2, flag, alu);
+            xorRegister xor = new xorRegister(dest, op1, op2, flag, alu);
+            norRegister nor = new norRegister(dest, op1, op2, flag, alu);
+            negRegister neg = new negRegister(dest, op1, flag, alu);
+
+            and.Execute();
+            Console.WriteLine("And reg {0:X4} and reg {1:X4} = {2:X4}, FLAGS {3:X}", op1.Value, op2.Value, dest.Value, flag.Value);
+            or.Execute();
+            Console.WriteLine("Or reg {0:X4} and reg {1:X4} = {2:X4}, FLAGS {3:X}", op1.Value, op2.Value, dest.Value, flag.Value);
+            xor.Execute();
+            Console.WriteLine("Xor reg {0:X4} and reg {1:X4} = {2:X4}, FLAGS {3:X}", op1.Value, op2.Value, dest.Value, flag.Value);
+            nor.Execute();
+            Console.WriteLine("Nor reg {0:X4} and reg {1:X4} = {2:X4}, FLAGS {3:X}", op1.Value, op2.Value, dest.Value, flag.Value);
+            neg.Execute();
+            Console.WriteLine("Neg reg {0:X4} = {1:X4}, FLAGS {2:X}", op1.Value, dest.Value, flag.Value);
+
 
         }
     }
