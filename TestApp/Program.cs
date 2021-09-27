@@ -3,6 +3,7 @@ using Simulator;
 using Simulator.Instructions.arithmetic;
 using Simulator.Instructions.logical;
 using Simulator.Instructions.control;
+using Simulator.Instructions.storage;
 
 namespace TestApp
 {
@@ -25,6 +26,9 @@ namespace TestApp
             Register pc2 = new Register();
             Register re = new Register();
             Register rf = new Register();
+
+            Memory memory = new Memory(8, false);
+
             ALU alu = new ALU(flag);
             short immValue = 1;
 
@@ -204,6 +208,29 @@ namespace TestApp
             jle jle = new jle(flag, pc1, pc2, re, rf);
             jle.Execute();
             Console.WriteLine("jle {0:X4}{1:X4}", pc1.Value, pc2.Value);
+
+
+            // Test load and store
+            op1.Value = 0x1234;
+            storImmediate stor = new storImmediate(memory, 0, op1);
+            stor.Execute();
+
+            loadImmediate load = new loadImmediate(memory, op2, 0);
+            load.Execute();
+
+            // Test push and pop
+            lda pushLDA = new lda(re, rf, 6);
+            pushLDA.Execute();
+            pushImmediate push = new pushImmediate(memory, 0x5678, re, rf);
+            push.Execute();
+            pushImmediate push2 = new pushImmediate(memory, 0x9ABC, re, rf);
+            push2.Execute();
+
+            pop pop = new pop(memory, op1, re, rf);
+            pop.Execute();
+            pop pop2 = new pop(memory, op2, re, rf);
+            pop2.Execute();
+
         }
     }
 }

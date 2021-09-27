@@ -21,7 +21,11 @@ namespace Simulator
 			get
 			{
 				// Return a short
-				return (ushort)((TheWholeNineYards[index] << 8) | TheWholeNineYards[index + 1]);
+				if (bigEndian)
+					return (ushort)((TheWholeNineYards[index] << 8) | TheWholeNineYards[index + 1]);
+				else
+					return (ushort)((TheWholeNineYards[index + 1] << 8) | TheWholeNineYards[index]);
+
 			}
 			set
 			{

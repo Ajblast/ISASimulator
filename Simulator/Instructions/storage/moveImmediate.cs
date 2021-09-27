@@ -5,14 +5,18 @@ namespace Simulator.Instructions.storage
 {
 	public class moveImmediate : Instruction
 	{
+        private Register dest;
+        private ushort imm;
+
 		public moveImmediate(Register dest, ushort imm)
 		{
-
+            this.dest = dest;
+            this.imm = imm;
 		}
 
         public override void Execute()
         {
-            throw new System.NotImplementedException();
+            dest.Value = imm;
         }
     }
 
