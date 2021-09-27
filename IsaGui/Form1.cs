@@ -20,7 +20,7 @@ namespace IsaGui
         private string assembly;
         public Form1()
         {
-            simMemory = new Memory(0x100000);
+            simMemory = new Memory(0x100000, true);
             simCpu = new CPU(simMemory);
             simCpu.registers.RE.Value = 0xF;
             simCpu.registers.RF.Value = 0xFFFE;
@@ -39,7 +39,7 @@ namespace IsaGui
             ALU1Box.Text = Convert.ToString(simCpu.alu.dest.Value, 2);
             ALU2Box.Text = Convert.ToString(simCpu.alu.op1.Value, 2);
             ALU3Box.Text = Convert.ToString(simCpu.alu.op2.Value, 2);
-            PCBox.Text = Convert.ToString(simCpu.registers.PC.Value, 2);
+            PCBox.Text = Convert.ToString(simCpu.registers.PC1.Value, 2);
             SP1Box.Text = Convert.ToString(simCpu.registers.SP1.Value, 2);
             SP2Box.Text = Convert.ToString(simCpu.registers.SP2.Value, 2);
             rABox.Text = Convert.ToString(simCpu.registers[0].Value, 2);
