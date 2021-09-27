@@ -5,14 +5,28 @@ namespace Simulator.Instructions.control
 {
 	public class jnz : Instruction
 	{
-		public jnz(Register flag, Register pc, Register rE, Register rF)
+        Register flag;
+        private Register PC1;
+        private Register PC2;
+        private Register rE;
+        private Register rF;
+        
+        public jnz(Register flag, Register pc1, Register pc2, Register rE, Register rF)
 		{
-
-		}
+            this.flag = flag;
+            this.PC1 = pc1;
+            this.PC2 = pc2;
+            this.rE = rE;
+            this.rF = rF;
+        }
 
         public override void Execute()
         {
-            throw new System.NotImplementedException();
+            if ((flag.Value & 2) == 0)
+            {
+                PC1.Value = rE.Value;
+                PC2.Value = rF.Value;
+            }
         }
     }
 

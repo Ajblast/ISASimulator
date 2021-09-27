@@ -5,15 +5,22 @@ namespace Simulator.Instructions.storage
 {
 	public class storImmediate : Instruction
 	{
-		public storImmediate(Memory memory, uint dest, Register src)
+        private Memory memory;
+        private uint dest;
+        private Register src;
+        
+        public storImmediate(Memory memory, uint dest, Register src)
 		{
-
-		}
+            this.memory = memory;
+            this.dest = dest;
+            this.src = src;
+        }
 
         public override void Execute()
         {
-            throw new System.NotImplementedException();
+            memory[(int) dest] = src.Value;
         }
+
     }
 
 }

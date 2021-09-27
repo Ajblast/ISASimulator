@@ -43,7 +43,14 @@ namespace Simulator
 			}
 		}
 		// Get the program counter
-		public Register PC
+		public Register PC1
+        {
+			get {
+				return this[11];
+			}
+        }
+		// Get the program counter
+		public Register PC2
         {
 			get {
 				return this[12];

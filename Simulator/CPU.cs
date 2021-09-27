@@ -20,7 +20,7 @@ namespace Simulator
 			// Create the registers
 			registers = new Registers();
 			// Create the fetcher
-			fetcher = new Fetcher(registers.PC, memory);
+			fetcher = new Fetcher(registers.PC1, registers.PC2, memory);
 
 			alu = new ALU(registers.FLAG);
 

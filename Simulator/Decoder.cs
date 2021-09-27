@@ -493,7 +493,8 @@ namespace Simulator
         {
 			return new jz(
 				registers.FLAG,
-				registers.PC,
+				registers.PC1,
+				registers.PC2,
 				registers.RE,
 				registers.RF);
         }
@@ -501,17 +502,19 @@ namespace Simulator
         private Instruction CreateJNZInstruction(ushort encodedInstruction)
         {
 			return new jnz(
-			   registers.FLAG,
-			   registers.PC,
-			   registers.RE,
-			   registers.RF);
+				registers.FLAG,
+				registers.PC1,
+				registers.PC2,
+				registers.RE,
+				registers.RF);
 		}
 
         private Instruction CreateJGInstruction(ushort encodedInstruction)
         {
 			return new jg(
 				registers.FLAG,
-				registers.PC,
+				registers.PC1,
+				registers.PC2,
 				registers.RE,
 				registers.RF);
 		}
@@ -520,7 +523,8 @@ namespace Simulator
         {
 			return new jge(
 				registers.FLAG,
-				registers.PC,
+				registers.PC1,
+				registers.PC2,
 				registers.RE,
 				registers.RF);
 		}
@@ -529,7 +533,8 @@ namespace Simulator
         {
 			return new jl(
 				registers.FLAG,
-				registers.PC,
+				registers.PC1,
+				registers.PC2,
 				registers.RE,
 				registers.RF);
 		}
@@ -538,7 +543,8 @@ namespace Simulator
         {
 			return new jle(
 				registers.FLAG,
-				registers.PC,
+				registers.PC1,
+				registers.PC2,
 				registers.RE,
 				registers.RF);
 		}
@@ -547,7 +553,8 @@ namespace Simulator
         {
 			return new ja(
 				registers.FLAG,
-				registers.PC,
+				registers.PC1,
+				registers.PC2,
 				registers.RE,
 				registers.RF);
 		}
@@ -556,7 +563,8 @@ namespace Simulator
         {
 			return new jae(
 				registers.FLAG,
-				registers.PC,
+				registers.PC1,
+				registers.PC2,
 				registers.RE,
 				registers.RF);
 		}
@@ -565,7 +573,8 @@ namespace Simulator
         {
 			return new jb(
 				registers.FLAG,
-				registers.PC,
+				registers.PC1,
+				registers.PC2,
 				registers.RE,
 				registers.RF);
 		}
@@ -574,7 +583,8 @@ namespace Simulator
         {
 			return new jbe(
 				registers.FLAG,
-				registers.PC,
+				registers.PC1,
+				registers.PC2,
 				registers.RE,
 				registers.RF);
 		}

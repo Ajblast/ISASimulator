@@ -2,6 +2,8 @@
 using Simulator;
 using Simulator.Instructions.arithmetic;
 using Simulator.Instructions.logical;
+using Simulator.Instructions.control;
+using Simulator.Instructions.storage;
 
 namespace TestApp
 {
@@ -20,6 +22,13 @@ namespace TestApp
             Register op1 = new Register();
             Register op2 = new Register();
             Register flag = new Register();
+            Register pc1 = new Register();
+            Register pc2 = new Register();
+            Register re = new Register();
+            Register rf = new Register();
+
+            Memory memory = new Memory(8, false);
+
             ALU alu = new ALU(flag);
             short immValue = 1;
 
@@ -130,10 +139,98 @@ namespace TestApp
 
             // Test LDA
             uint immLDA = 0x0003F3F3;
-            lda lda = new lda(op1, op2, immLDA);
+            lda lda = new lda(re, rf, immLDA);
             lda.Execute();
 
-            Console.WriteLine("LDA imm {0:X8} = {1:X4}{2:X4}", immLDA, op1.Value, op2.Value);
+            Console.WriteLine("LDA imm {0:X8} = {1:X4}{2:X4}", immLDA, re.Value, rf.Value);
+
+            Console.WriteLine();
+
+            // Test Jumps
+            op1.Value = 1;
+            subImmediate tJumpSub = new subImmediate(dest, op1, 1, flag, alu);
+            tJumpSub.Execute();
+            pc1.Value = 0;
+            pc2.Value = 0;
+            jz jz = new jz(flag, pc1, pc2, re, rf);
+            jz.Execute();
+            Console.WriteLine("jz {0:X4}{1:X4}", pc1.Value, pc2.Value);
+            pc1.Value = 0;
+            pc2.Value = 0;
+            jnz jnz = new jnz(flag, pc1, pc2, re, rf);
+            jnz.Execute();
+            Console.WriteLine("jnz {0:X4}{1:X4}", pc1.Value, pc2.Value);
+
+            op1.Value = 1;
+            op2.Value = 0;
+            cmp tJA = new cmp(op1, op2, alu);
+            tJA.Execute();
+            pc1.Value = 0;
+            pc2.Value = 0;
+            ja ja = new ja(flag, pc1, pc2, re, rf);
+            ja.Execute();
+            Console.WriteLine("ja {0:X4}{1:X4}", pc1.Value, pc2.Value);
+            pc1.Value = 0;
+            pc2.Value = 0;
+            jae jae = new jae(flag, pc1, pc2, re, rf);
+            jae.Execute();
+            Console.WriteLine("jae {0:X4}{1:X4}", pc1.Value, pc2.Value);
+
+            pc1.Value = 0;
+            pc2.Value = 0;
+            jb jb = new jb(flag, pc1, pc2, re, rf);
+            jb.Execute();
+            Console.WriteLine("jb {0:X4}{1:X4}", pc1.Value, pc2.Value);
+            pc1.Value = 0;
+            pc2.Value = 0;
+            jbe jbe = new jbe(flag, pc1, pc2, re, rf);
+            jbe.Execute();
+            Console.WriteLine("jbe {0:X4}{1:X4}", pc1.Value, pc2.Value);
+
+            pc1.Value = 0;
+            pc2.Value = 0;
+            jg jg = new jg(flag, pc1, pc2, re, rf);
+            jg.Execute();
+            Console.WriteLine("jg {0:X4}{1:X4}", pc1.Value, pc2.Value);
+            pc1.Value = 0;
+            pc2.Value = 0;
+            jge jge = new jge(flag, pc1, pc2, re, rf);
+            jge.Execute();
+            Console.WriteLine("jge {0:X4}{1:X4}", pc1.Value, pc2.Value);
+
+            pc1.Value = 0;
+            pc2.Value = 0;
+            jl jl = new jl(flag, pc1, pc2, re, rf);
+            jl.Execute();
+            Console.WriteLine("jl {0:X4}{1:X4}", pc1.Value, pc2.Value);
+            pc1.Value = 0;
+            pc2.Value = 0;
+            jle jle = new jle(flag, pc1, pc2, re, rf);
+            jle.Execute();
+            Console.WriteLine("jle {0:X4}{1:X4}", pc1.Value, pc2.Value);
+
+
+            // Test load and store
+            op1.Value = 0x1234;
+            storImmediate stor = new storImmediate(memory, 0, op1);
+            stor.Execute();
+
+            loadImmediate load = new loadImmediate(memory, op2, 0);
+            load.Execute();
+
+            // Test push and pop
+            lda pushLDA = new lda(re, rf, 6);
+            pushLDA.Execute();
+            pushImmediate push = new pushImmediate(memory, 0x5678, re, rf);
+            push.Execute();
+            pushImmediate push2 = new pushImmediate(memory, 0x9ABC, re, rf);
+            push2.Execute();
+
+            pop pop = new pop(memory, op1, re, rf);
+            pop.Execute();
+            pop pop2 = new pop(memory, op2, re, rf);
+            pop2.Execute();
+
         }
     }
 }
