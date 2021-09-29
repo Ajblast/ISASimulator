@@ -108,6 +108,7 @@ namespace IsaGui
             this.BinaryTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.BinaryTextBox.Location = new System.Drawing.Point(32, 108);
             this.BinaryTextBox.Name = "BinaryTextBox";
+            this.BinaryTextBox.ReadOnly = true;
             this.BinaryTextBox.Size = new System.Drawing.Size(852, 130);
             this.BinaryTextBox.TabIndex = 1;
             this.BinaryTextBox.Text = "";
