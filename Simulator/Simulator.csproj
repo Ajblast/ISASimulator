@@ -44,6 +44,7 @@
     <Compile Include="ALU.cs" />
     <Compile Include="CPU.cs" />
     <Compile Include="Decoder.cs" />
+    <Compile Include="Encoder.cs" />
     <Compile Include="Executor.cs" />
     <Compile Include="Fetcher.cs" />
     <Compile Include="Instructions\arithmetic\addcImmediate.cs" />
