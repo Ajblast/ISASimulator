@@ -24,8 +24,8 @@ namespace IsaGui
         {
             simMemory = new Memory(0x100000, true);
             simCpu = new CPU(simMemory);
-            simCpu.registers.RE.Value = 0xF;
-            simCpu.registers.RF.Value = 0xFFFE;
+            simCpu.registers.SP1.Value = 0xF;
+            simCpu.registers.SP2.Value = 0xFFFE;
             InitializeComponent();
             updateRegisters();
         }
