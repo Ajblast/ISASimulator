@@ -80,9 +80,11 @@ namespace IsaGui
             openFileDialog.InitialDirectory = System.IO.Path.GetFullPath(CombinedPath);
             if (openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
+
             StepCounter = 0;
             binaryInFilePath = openFileDialog.FileName;
             InstallBinary(binaryInFilePath);
+
             assemblyBox.SelectedIndex = StepCounter;
             simCpu.halt.Value = 0;
         }
@@ -95,22 +97,27 @@ namespace IsaGui
             openFileDialog.InitialDirectory = System.IO.Path.GetFullPath(CombinedPath);
             if (openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
+
             StepCounter = 0;
+
             //Load into assembly list box
             assemblyBox.Items.Clear();
             assemblyFilePath = openFileDialog.FileName;
+
             var fileStream = File.OpenRead(assemblyFilePath);
             var streamReader = new StreamReader(fileStream);
             string pulledLine;
             while ((pulledLine = streamReader.ReadLine()) != null)
             {
-                if( string.IsNullOrEmpty(pulledLine) == false && pulledLine[0] != '/')
+                if (string.IsNullOrEmpty(pulledLine) == false && pulledLine[0] != '/')
                     assemblyBox.Items.Add(pulledLine);
             }
+
             assemblyBox.EndUpdate();
-             binaryEncoder = new Simulator.Encoder(assemblyFilePath);
+            binaryEncoder = new Simulator.Encoder(assemblyFilePath);
             binaryEncoder.EncodeFile();
-            InstallBinary(assemblyFilePath.Replace(".txt",".bin"));
+
+            InstallBinary(assemblyFilePath.Replace(".txt", ".bin"));
             assemblyBox.SelectedIndex = StepCounter;
             simCpu.halt.Value = 0;
         }
