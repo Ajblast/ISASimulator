@@ -58,7 +58,7 @@ namespace IsaGui
             oBox.Text = Convert.ToString((((uint)simCpu.registers.FLAG.Value & 0x0008) >> 3), 2);
             eqBox.Text = Convert.ToString((((uint)simCpu.registers.FLAG.Value & 0x0004) >> 2), 2);
             zBox.Text = Convert.ToString((((uint)simCpu.registers.FLAG.Value & 0x0002) >> 1), 2);
-            zBox.Text = Convert.ToString(((uint)simCpu.registers.FLAG.Value & 0x0001), 2);
+            cBox.Text = Convert.ToString(((uint)simCpu.registers.FLAG.Value & 0x0001), 2);
         }
 
         private void openBinaryToolStripMenuItem_Click(object sender, EventArgs e)
