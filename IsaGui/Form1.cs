@@ -20,6 +20,7 @@ namespace IsaGui
         private string binaryInFilePath;
         private Simulator.Encoder binaryEncoder;
         private Dictionary<int, int> InstructionMemAddrToGUIIndex = new Dictionary<int,int>();
+        private Decoder.Decoder textDecoder;
         public Form1()
         {
             InitializeComponent();
@@ -88,6 +89,17 @@ namespace IsaGui
 
             binaryInFilePath = openFileDialog.FileName;
             InstallBinary(binaryInFilePath);
+            textDecoder = new Decoder.Decoder(binaryInFilePath);
+            string assemblyText = textDecoder.DecodedFile();
+
+            StreamWriter sw = new StreamWriter(binaryInFilePath.Replace(".bin", ".sht"));
+            sw.Write(assemblyText);
+            sw.Close();
+            binaryEncoder.ChangeFiles(binaryInFilePath.Replace(".bin", ".sht"));
+            binaryEncoder.EncodeFile();
+
+            FeedInAssembly();
+
             simCpu.halt.Value = 0;
             fixMemAddrToGUIIndex();
             if (InstructionMemAddrToGUIIndex.Count != 0)
@@ -117,6 +129,17 @@ namespace IsaGui
             binaryEncoder = new Simulator.Encoder(assemblyFilePath);
             binaryEncoder.EncodeFile();
 
+            FeedInAssembly();
+
+            InstallBinary(assemblyFilePath.Replace(".txt",".bin"));
+            simCpu.halt.Value = 0;
+            fixMemAddrToGUIIndex();
+            if (InstructionMemAddrToGUIIndex.Count != 0)
+                assemblyBox.SelectedIndex = InstructionMemAddrToGUIIndex[((simCpu.registers.PC1.Value & 0xF) << 16) | simCpu.registers.PC2.Value];
+        }
+
+        private void FeedInAssembly()
+        {
             var fileStream = File.OpenRead(assemblyFilePath.Replace(".txt", ".remix"));
             var streamReader = new StreamReader(fileStream);
             string pulledLine;
@@ -128,12 +151,6 @@ namespace IsaGui
 
             assemblyBox.EndUpdate();
             fileStream.Close();
-
-            InstallBinary(assemblyFilePath.Replace(".txt",".bin"));
-            simCpu.halt.Value = 0;
-            fixMemAddrToGUIIndex();
-            if (InstructionMemAddrToGUIIndex.Count != 0)
-                assemblyBox.SelectedIndex = InstructionMemAddrToGUIIndex[((simCpu.registers.PC1.Value & 0xF) << 16) | simCpu.registers.PC2.Value];
         }
 
         private void InstallBinary(string binaryInFilePath)
