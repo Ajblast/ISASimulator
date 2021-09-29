@@ -52,6 +52,8 @@ namespace Decoder
 
 			decodedFile = Decode();
 			decodedStats = summaryStats();
+
+			br.Close();
 		}
 
 		public string DecodedFile()
