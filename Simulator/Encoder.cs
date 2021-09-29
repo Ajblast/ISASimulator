@@ -51,8 +51,8 @@ namespace Simulator
         public Encoder(string filePath)
         {
             txtFilePath = filePath;
-            remixFilePath = filePath + "Remix";
-            binFilePath = filePath + "Bin";
+            remixFilePath = filePath.Replace(".txt", ".remix"); 
+            binFilePath = filePath.Replace(".txt", ".bin"); ;
 
             sr = new StreamReader(txtFilePath);
             sw = new StreamWriter(remixFilePath);
@@ -101,7 +101,7 @@ namespace Simulator
             inDicCode = new Dictionary<string, byte>();
             inDicCode.Add("nop", 0);
             inDicCode.Add("add", 1);
-            inDicCode.Add("addc", 1);
+            inDicCode.Add("addc", 2);
             inDicCode.Add("subb", 3);
             inDicCode.Add("and", 4);
             inDicCode.Add("or", 5);
@@ -162,7 +162,8 @@ namespace Simulator
         public void ChangeFiles(string filePath)
         {
             txtFilePath = filePath;
-            remixFilePath = filePath + "Remix";
+            remixFilePath = filePath.Replace(".txt", ".remix");
+            binFilePath = filePath.Replace(".txt", ".bin");
 
             labels = new List<string>();
             labelPositions = new List<int>();
