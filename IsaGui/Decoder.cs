@@ -196,7 +196,7 @@ namespace Decoder
 		private string CreateADDInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -218,7 +218,7 @@ namespace Decoder
 		private string CreateADDCInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -240,7 +240,7 @@ namespace Decoder
 		private string CreateSUBBInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -262,7 +262,7 @@ namespace Decoder
 		private string CreateANDInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -284,7 +284,7 @@ namespace Decoder
 		private string CreateORInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -306,7 +306,7 @@ namespace Decoder
 		private string CreateNORInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -328,7 +328,7 @@ namespace Decoder
 		private string CreateSHLInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -350,7 +350,7 @@ namespace Decoder
 		private string CreateSHRInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -372,7 +372,7 @@ namespace Decoder
 		private string CreateSHARInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -394,7 +394,7 @@ namespace Decoder
 		private string CreateRORInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -416,7 +416,7 @@ namespace Decoder
 		private string CreateROLInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -438,7 +438,7 @@ namespace Decoder
 		private string CreateRORCInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -460,7 +460,7 @@ namespace Decoder
 		private string CreateROLCInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -483,7 +483,7 @@ namespace Decoder
 		private string CreateLOADInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -505,7 +505,7 @@ namespace Decoder
 		private string CreateSTORInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -527,7 +527,7 @@ namespace Decoder
 		private string CreateMOVInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -549,7 +549,7 @@ namespace Decoder
 		private string CreatePUSHInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "push ";
@@ -673,7 +673,7 @@ namespace Decoder
 		private string CreateLDAInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte immediate20 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "lda ";
@@ -686,7 +686,7 @@ namespace Decoder
 		private string CreateNEGInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -708,7 +708,7 @@ namespace Decoder
 		private string CreateXORInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
@@ -730,7 +730,7 @@ namespace Decoder
 		private string CreateSUBInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
-			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
+			ushort temp = (ushort)(bytes[0] << 8 | bytes[1]);
 			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 			byte op1 = (byte)(encodedInstruction & 0x000F);
 
