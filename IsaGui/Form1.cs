@@ -18,7 +18,7 @@ namespace IsaGui
         private CPU simCpu;
         private string assemblyFilePath;
         private string binaryInFilePath;
-        private Simulator.Encoder binaryEncoder;
+        private Simulator.Encoder binaryEncoder = new Simulator.Encoder("");
         private Dictionary<int, int> InstructionMemAddrToGUIIndex = new Dictionary<int,int>();
         private Decoder.Decoder textDecoder;
 
@@ -120,7 +120,7 @@ namespace IsaGui
             //Load into assembly list box
             assemblyFilePath = openFileDialog.FileName;
 
-            binaryEncoder = new Simulator.Encoder(assemblyFilePath);
+            binaryEncoder.ChangeFiles(assemblyFilePath);
             binaryInFilePath = binaryEncoder.EncodeFile();
             textDecoder = new Decoder.Decoder(binaryInFilePath);
 
