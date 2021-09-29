@@ -10,8 +10,8 @@ using System.Runtime.InteropServices;
 
 namespace Simulator
 {
-    
-    
+
+
     /// <summary>
     /// Encoder
     /// This class will encode a file of commands written in team 5's ISA into the binary equivalents written in our ISA
@@ -32,7 +32,7 @@ namespace Simulator
                                                         //commas, and removing comments
         private string binFilePath;                     //Holds the path to the binary file that holds the encoded version of the original file
 
-        private StreamWriter sw;                        
+        private StreamWriter sw;
         private StreamReader sr;
         private BinaryWriter bw;
 
@@ -51,7 +51,7 @@ namespace Simulator
         public Encoder(string filePath)
         {
             txtFilePath = filePath;
-            remixFilePath = filePath.Replace(".txt", ".remix"); 
+            remixFilePath = filePath.Replace(".txt", ".remix");
             binFilePath = filePath.Replace(".txt", ".bin"); ;
 
             sr = new StreamReader(txtFilePath);
@@ -196,10 +196,10 @@ namespace Simulator
             string[] arr;
             string input = sr.ReadLine();
 
-            while(input != null)
+            while (input != null)
             {
                 input = input.Replace(", ", " ");
-                if(input.Contains("//"))    //This will remove any comments present in the code
+                if (input.Contains("//"))    //This will remove any comments present in the code
                 {
                     input = input.Remove(input.IndexOf("//"), input.Length - input.IndexOf("//"));
                 }
@@ -215,8 +215,8 @@ namespace Simulator
                 }
                 else
                 {
-                    if(!input.Equals(""))   //A line may be empty if it only contained a comment, for my sake I've excluded these lines
-                       sw.WriteLine(input);
+                    if (!input.Equals(""))   //A line may be empty if it only contained a comment, for my sake I've excluded these lines
+                        sw.WriteLine(input);
                 }
                 input = sr.ReadLine();
             }
@@ -234,17 +234,17 @@ namespace Simulator
             string input = sr.ReadLine();
             string[] arr;
 
-            while(input != null)
+            while (input != null)
             {
                 arr = input.Split(' ');
                 int x;                                  //This int will hold the size of a command
-                if(inDicSize.TryGetValue(arr[0], out x))
+                if (inDicSize.TryGetValue(arr[0], out x))
                 {
-                    if(x == 0)                          //This if block will deal with any of the placeholder 0's that represent hybrid commands
+                    if (x == 0)                          //This if block will deal with any of the placeholder 0's that represent hybrid commands
                     {                                   //Since there are only 2 hybrid commands, there's only 2 cases
-                        if(arr.Length == 2)             //if the command has 1 operand (push)
+                        if (arr.Length == 2)             //if the command has 1 operand (push)
                         {
-                            if(arr[1].Contains("#"))    //if the operand is an immediate
+                            if (arr[1].Contains("#"))    //if the operand is an immediate
                             {
                                 inLengths.Add(32);
                             }
@@ -255,7 +255,7 @@ namespace Simulator
                         }
                         else                             //(mov)
                         {
-                            if(arr[2].Contains("#"))
+                            if (arr[2].Contains("#"))
                             {
                                 inLengths.Add(32);
                             }
@@ -295,7 +295,7 @@ namespace Simulator
         {
             sr = new StreamReader(remixFilePath);
             int counter = 0;                                                //This counter holds the current offset for a command
-            for(int i = 0; i < inLengths.Count; i++)                        //Every line has a corresponding entry in the array, so we'll just loop through all of the items in inLengths
+            for (int i = 0; i < inLengths.Count; i++)                        //Every line has a corresponding entry in the array, so we'll just loop through all of the items in inLengths
             {
                 string input = sr.ReadLine();
                 if (inLengths[i] == -1)                                     //If we come across a label we can just add a new string to labels and add a new int in positions
@@ -320,7 +320,7 @@ namespace Simulator
             sr = new StreamReader(remixFilePath);
             bw = new BinaryWriter(File.OpenWrite(binFilePath));
             string input;
-            for(int i = 0; i < inLengths.Count; i++)
+            for (int i = 0; i < inLengths.Count; i++)
             {
                 input = sr.ReadLine();
                 if (inLengths[i] == 32)
@@ -364,15 +364,15 @@ namespace Simulator
                     case 3:                                         //for cmp and mov reg
 
                         immediate = 0;
-                        regDicCode.TryGetValue(arr[1], out Op1);
-                        regDicCode.TryGetValue(arr[2], out Op2);
+                        Op1 = regDicCode[arr[1]];
+                        Op2 = regDicCode[arr[2]];
                         code |= (ushort)((immediate & 0x1) << 8);
                         code |= (ushort)((Op1 & 0xF) << 4);
                         code |= (ushort)(Op2 & 0xF);
                         break;
                     case 2:                                         //for pop and push reg
                         immediate = 0;
-                        regDicCode.TryGetValue(arr[1], out Op1);
+                        Op1 = regDicCode[arr[1]];
                         code |= (ushort)((immediate & 0x1) << 8);
                         code |= (ushort)((Op1 & 0xF) << 4);
                         code |= (ushort)(0x00 & 0xF);
@@ -415,24 +415,24 @@ namespace Simulator
                     case 4:                                               //For arithmetic instructions with immediates or registers or load/stor register
                         if (arr[3].Contains("#"))                         //for arithmetic imm
                         {
-                           immediate = 1;
-                            regDicCode.TryGetValue(arr[1], out Op1);
-                            regDicCode.TryGetValue(arr[2], out Op2);
+                            immediate = 1;
+                            Op1 = regDicCode[arr[1]];
+                            Op2 = regDicCode[arr[2]];
                             imm = UInt16.Parse(arr[3].Substring(1));
                             code |= (uint)((immediate & 0x1) << 24);
                             code |= (uint)((Op1 & 0xF) << 20);
                             code |= (uint)((Op2 & 0xF) << 16);
                             code |= (uint)(imm & 0xFFFF);
-                            
+
                         }
                         else                                                //for arithmetic reg and load/stor register
                         {
                             if (opcode == 14 || opcode == 15)               //for load/stor register
                             {
                                 immediate = 0;
-                                regDicCode.TryGetValue(arr[1], out Op1);
-                                regDicCode.TryGetValue(arr[2], out Op2);
-                                regDicCode.TryGetValue(arr[3], out Op3);
+                                Op1 = regDicCode[arr[1]];
+                                Op2 = regDicCode[arr[2]];
+                                Op3 = regDicCode[arr[3]];
                                 code |= (uint)((immediate & 0x1) << 24);
                                 code |= (uint)((Op1 & 0xF) << 20);
                                 code |= (uint)((Op2 & 0xF) << 16);
@@ -442,9 +442,9 @@ namespace Simulator
                             else                                            //for arithmetic reg
                             {
                                 immediate = 0;
-                                regDicCode.TryGetValue(arr[1], out Op1);
-                                regDicCode.TryGetValue(arr[2], out Op2);
-                                regDicCode.TryGetValue(arr[3], out Op3);
+                                Op1 = regDicCode[arr[1]];
+                                Op2 = regDicCode[arr[2]];
+                                Op3 = regDicCode[arr[3]];
                                 code |= (uint)((immediate & 0x1) << 24);
                                 code |= (uint)((Op1 & 0xF) << 20);
                                 code |= (uint)((Op2 & 0xF) << 16);
@@ -457,7 +457,7 @@ namespace Simulator
                         if (arr[1].Contains("<"))               //for stor imm
                         {
                             immediate = 1;
-                            regDicCode.TryGetValue(arr[2], out Op1);
+                            Op1 = regDicCode[arr[2]];
                             mem = (uint)labelPositions[labels.IndexOf(arr[1].Substring(1, arr[1].Length - 2))];
                             code |= (uint)((immediate & 0x1) << 24);
                             code |= (uint)((Op1 & 0xF) << 20);
@@ -466,7 +466,7 @@ namespace Simulator
                         else if (arr[1].Contains("#"))          //for stor imm
                         {
                             immediate = 1;
-                            regDicCode.TryGetValue(arr[2], out Op1);
+                            Op1 = regDicCode[arr[2]];
                             mem = UInt32.Parse(arr[1].Substring(1));
                             code |= (uint)((immediate & 0x1) << 24);
                             code |= (uint)((Op1 & 0xF) << 20);
@@ -476,7 +476,7 @@ namespace Simulator
                         else if (arr[2].Contains("<"))          //for load imm
                         {
                             immediate = 1;
-                            regDicCode.TryGetValue(arr[1], out Op1);
+                            Op1 = regDicCode[arr[1]];
                             mem = (uint)labelPositions[labels.IndexOf(arr[2].Substring(1, arr[1].Length - 2))];
                             code |= (uint)((immediate & 0x1) << 24);
                             code |= (uint)((Op1 & 0xF) << 20);
@@ -487,17 +487,17 @@ namespace Simulator
                             if (opcode == 14)                   //for load imm
                             {
                                 immediate = 1;
-                                regDicCode.TryGetValue(arr[1], out Op1);
+                                Op1 = regDicCode[arr[1]];
                                 mem = UInt32.Parse(arr[2].Substring(1));
                                 code |= (uint)((immediate & 0x1) << 24);
                                 code |= (uint)((Op1 & 0xF) << 20);
                                 code |= (uint)(mem & 0xFFFFF);
-                                
+
                             }
                             else                                //for neg imm, mov imm
                             {
                                 immediate = 1;
-                                regDicCode.TryGetValue(arr[1], out Op1);
+                                Op1 = regDicCode[arr[1]];
                                 imm = UInt16.Parse(arr[2].Substring(1));
                                 code |= (uint)((immediate & 0x1) << 24);
                                 code |= (uint)((Op1 & 0xF) << 20);
@@ -508,8 +508,8 @@ namespace Simulator
                         else                                    //for neg reg
                         {
                             immediate = 0;
-                            regDicCode.TryGetValue(arr[1], out Op1);
-                            regDicCode.TryGetValue(arr[2], out Op2);
+                            Op1 = regDicCode[arr[1]];
+                            Op2 = regDicCode[arr[2]];
                             code |= (uint)((immediate & 0x1) << 24);
                             code |= (uint)((Op1 & 0xF) << 20);
                             code |= (uint)((Op2 & 0xF) << 16);
@@ -517,9 +517,9 @@ namespace Simulator
                         }
                         break;
                     case 2:                                                 //for lda and push imm
-                        if(arr[1].Contains("#"))
+                        if (arr[1].Contains("#"))
                         {
-                            if(opcode == 30)                                //for lda with a register
+                            if (opcode == 30)                                //for lda with a register
                             {
                                 immediate = 1;
                                 mem = UInt32.Parse(arr[1].Substring(1));
