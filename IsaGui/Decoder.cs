@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace Decoder
 {
@@ -7,11 +8,11 @@ namespace Decoder
 	public class Decoder
 	{
 		private const ushort OpCodeMask = 0xFE00;
-		private const ushort DestRegMask = 0x00F0;
 		private const ushort ImmediateIdentifierMask = 0x0100;
-		private string filePath;
+
 		private BinaryReader br;
-		private StreamWriter sw;
+		private string decodedFile;
+		private string decodedStats;
 
 		private int totalInstructions = 0;
 		private int addInstructions = 0;
@@ -27,151 +28,163 @@ namespace Decoder
 		private int rolInstructions = 0;
 		private int rorcInstructions = 0;
 		private int rolcInstructions = 0;
-
 		private int loadInstructions = 0;
 		private int storInstructions = 0;
 		private int movInstructions = 0;
 		private int pushInstructions = 0;
 		private int popInstructions = 0;
-
 		private int cmpInstructions = 0;
 		private int jumpInstructions = 0;
-
 		private int ldaInstructions = 0;
 		private int negInstructions = 0;
 		private int haltInstructions = 0;
 		private int subInstructions = 0;
 		private int xorInstructions = 0;
-
 		private int immediateInstructions = 0;
 		private int registerInstructions = 0;
 		private int nopInstructions = 0;
 		private int controlInstructions = 0;
 
-		//Arithmetic Masks
-		private const ushort ArithDestRegMask = DestRegMask;
-		private const ushort Arith1RegOP = 0x000F;
-		private const ushort RegOP2 = 0x000F; //used for any instruction format where 2nd op is 4 LSB of 32-bit LBSs
-
 		// Create the decoder with the fetcher, registers, and memory
 		public Decoder(string filePath)
 		{
-			this.filePath = filePath;
 			br = new BinaryReader(File.Open(filePath, FileMode.Open));
-			sw = new StreamWriter(@"C:\Users\NdeBe\Desktop\test.txt");
+
+			decodedFile = Decode();
+			decodedStats = summaryStats();
 		}
 
+		public string DecodedFile()
+        {
+			return decodedFile;
+		}
+		public string DecodedStats()
+        {
+			return decodedStats;
+        }
+
+		private string Decode()
+        {
+			StringBuilder sb = new StringBuilder();
+			while (br.PeekChar() != -1)
+			{
+				ushort nextInstruction = (ushort)(br.ReadByte() << 8 | br.ReadByte());
+				sb.AppendLine(Decode(nextInstruction));
+			}
+
+			return sb.ToString();
+		}
 		// Decode an instruction
-		public string Decode(ushort EncodedInstruction)
+		private string Decode(ushort EncodedInstruction)
 		{
 			ushort OpCode = ExtractInstruction(EncodedInstruction);
 			string CreatedInstruction;
 			switch (OpCode)
 			{
 				case (ushort)Operation.NOP:
-					sw.WriteLine(CreatedInstruction = CreateNOPInstruction(EncodedInstruction));
+					CreatedInstruction = CreateNOPInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.ADD:
-					sw.WriteLine(CreatedInstruction = CreateADDInstruction(EncodedInstruction));
+					CreatedInstruction = CreateADDInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.ADDC:
-					sw.WriteLine(CreatedInstruction = CreateADDCInstruction(EncodedInstruction));
+					CreatedInstruction = CreateADDCInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.SUBB:
-					sw.WriteLine(CreatedInstruction = CreateSUBBInstruction(EncodedInstruction));
+					CreatedInstruction = CreateSUBBInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.AND:
-					sw.WriteLine(CreatedInstruction = CreateANDInstruction(EncodedInstruction));
+					CreatedInstruction = CreateANDInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.OR:
-					sw.WriteLine(CreatedInstruction = CreateORInstruction(EncodedInstruction));
+					CreatedInstruction = CreateORInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.NOR:
-					sw.WriteLine(CreatedInstruction = CreateNORInstruction(EncodedInstruction));
+					CreatedInstruction = CreateNORInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.SHL:
-					sw.WriteLine(CreatedInstruction = CreateSHLInstruction(EncodedInstruction));
+					CreatedInstruction = CreateSHLInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.SHR:
-					sw.WriteLine(CreatedInstruction = CreateSHRInstruction(EncodedInstruction));
+					CreatedInstruction = CreateSHRInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.SHAR:
-					sw.WriteLine(CreatedInstruction = CreateSHARInstruction(EncodedInstruction));
+					CreatedInstruction = CreateSHARInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.ROR:
-					sw.WriteLine(CreatedInstruction = CreateRORInstruction(EncodedInstruction));
+					CreatedInstruction = CreateRORInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.ROL:
-					sw.WriteLine(CreatedInstruction = CreateROLInstruction(EncodedInstruction));
+					CreatedInstruction = CreateROLInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.RORC:
-					sw.WriteLine(CreatedInstruction = CreateRORCInstruction(EncodedInstruction));
+					CreatedInstruction = CreateRORCInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.ROLC:
-					sw.WriteLine(CreatedInstruction = CreateROLCInstruction(EncodedInstruction));
+					CreatedInstruction = CreateROLCInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.LOAD:
-					sw.WriteLine(CreatedInstruction = CreateLOADInstruction(EncodedInstruction));
+					CreatedInstruction = CreateLOADInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.STOR:
-					sw.WriteLine(CreatedInstruction = CreateSTORInstruction(EncodedInstruction));
+					CreatedInstruction = CreateSTORInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.MOV:
-					sw.WriteLine(CreatedInstruction = CreateMOVInstruction(EncodedInstruction));
+					CreatedInstruction = CreateMOVInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.PUSH:
-					sw.WriteLine(CreatedInstruction = CreatePUSHInstruction(EncodedInstruction));
+					CreatedInstruction = CreatePUSHInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.POP:
-					sw.WriteLine(CreatedInstruction = CreatePOPInstruction(EncodedInstruction));
+					CreatedInstruction = CreatePOPInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.CMP:
-					sw.WriteLine(CreatedInstruction = CreateCMPInstruction(EncodedInstruction));
+					CreatedInstruction = CreateCMPInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.JZ:
-					sw.WriteLine(CreatedInstruction = CreateJZInstruction(EncodedInstruction));
+					CreatedInstruction = CreateJZInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.JNZ:
-					sw.WriteLine(CreatedInstruction = CreateJNZInstruction(EncodedInstruction));
+					CreatedInstruction = CreateJNZInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.JG:
-					sw.WriteLine(CreatedInstruction = CreateJGInstruction(EncodedInstruction));
+					CreatedInstruction = CreateJGInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.JGE:
-					sw.WriteLine(CreatedInstruction = CreateJGEInstruction(EncodedInstruction));
+					CreatedInstruction = CreateJGEInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.JL:
-					sw.WriteLine(CreatedInstruction = CreateJLInstruction(EncodedInstruction));
+					CreatedInstruction = CreateJLInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.JLE:
-					sw.WriteLine(CreatedInstruction = CreateJLEInstruction(EncodedInstruction));
+					CreatedInstruction = CreateJLEInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.JA:
-					sw.WriteLine(CreatedInstruction = CreateJAInstruction(EncodedInstruction));
+					CreatedInstruction = CreateJAInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.JAE:
-					sw.WriteLine(CreatedInstruction = CreateJAEInstruction(EncodedInstruction));
+					CreatedInstruction = CreateJAEInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.JB:
-					sw.WriteLine(CreatedInstruction = CreateJBInstruction(EncodedInstruction));
+					CreatedInstruction = CreateJBInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.JBE:
-					sw.WriteLine(CreatedInstruction = CreateJBEInstruction(EncodedInstruction));
+					CreatedInstruction = CreateJBEInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.LDA:
-					sw.WriteLine(CreatedInstruction = CreateLDAInstruction(EncodedInstruction));
+					CreatedInstruction = CreateLDAInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.NEG:
-					sw.WriteLine(CreatedInstruction = CreateNEGInstruction(EncodedInstruction));
+					CreatedInstruction = CreateNEGInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.XOR:
-					sw.WriteLine(CreatedInstruction = CreateXORInstruction(EncodedInstruction));
+					CreatedInstruction = CreateXORInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.SUB:
-					sw.WriteLine(CreatedInstruction = CreateSUBInstruction(EncodedInstruction));
+					CreatedInstruction = CreateSUBInstruction(EncodedInstruction);
 					break;
 				case (ushort)Operation.HALT:
-					sw.WriteLine(CreatedInstruction = CreateHALTInstruction(EncodedInstruction));
+					CreatedInstruction = CreateHALTInstruction(EncodedInstruction);
 					break;
 				default:
 					throw new Exception("Invalid Instruction OP code Dedcoded");
@@ -184,8 +197,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "add " + returnRegister(destination) + returnRegister(op1);
 			if (immediateBitSet(encodedInstruction))
@@ -195,7 +208,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			addInstructions++;
@@ -206,8 +219,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "addc " + returnRegister(destination) + returnRegister(op1);
 			if (immediateBitSet(encodedInstruction))
@@ -217,7 +230,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			addcInstructions++;
@@ -228,8 +241,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "subb " + returnRegister(destination) + returnRegister(op1);
 			if (immediateBitSet(encodedInstruction))
@@ -239,7 +252,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			subbInstructions++;
@@ -250,8 +263,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "and " + returnRegister(destination) + returnRegister(op1);
 			if (immediateBitSet(encodedInstruction))
@@ -261,7 +274,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			andInstructions++;
@@ -272,8 +285,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "or " + returnRegister(destination) + returnRegister(op1);
 			if (immediateBitSet(encodedInstruction))
@@ -283,7 +296,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			orInstructions++;
@@ -294,8 +307,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "nor " + returnRegister(destination) + returnRegister(op1);
 			if (immediateBitSet(encodedInstruction))
@@ -305,7 +318,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			norInstructions++;
@@ -316,8 +329,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "shl " + returnRegister(destination) + returnRegister(op1);
 			if (immediateBitSet(encodedInstruction))
@@ -327,7 +340,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			shlInstructions++;
@@ -338,8 +351,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "shr " + returnRegister(destination) + returnRegister(op1);
 			if (immediateBitSet(encodedInstruction))
@@ -349,7 +362,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			shrInstructions++;
@@ -360,8 +373,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "shar " + returnRegister(destination) + returnRegister(op1);
 			if (immediateBitSet(encodedInstruction))
@@ -371,7 +384,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			sharInstructions++;
@@ -382,8 +395,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "ror " + returnRegister(destination) + returnRegister(op1);
 			if (immediateBitSet(encodedInstruction))
@@ -393,7 +406,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			rorInstructions++;
@@ -404,8 +417,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "rol " + returnRegister(destination) + returnRegister(op1);
 			if (immediateBitSet(encodedInstruction))
@@ -415,7 +428,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			rolInstructions++;
@@ -426,8 +439,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "rorc " + returnRegister(destination) + returnRegister(op1);
 			if (immediateBitSet(encodedInstruction))
@@ -437,7 +450,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			rorcInstructions++;
@@ -448,8 +461,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "rolc " + returnRegister(destination) + returnRegister(op1);
 			if (immediateBitSet(encodedInstruction))
@@ -459,7 +472,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			rolcInstructions++;
@@ -471,8 +484,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "load " + returnRegister(destination);
 			if (immediateBitSet(encodedInstruction))
@@ -482,7 +495,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister(op1) + returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister(op1) + returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			loadInstructions++;
@@ -493,8 +506,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "stor " + returnRegister(destination);
 			if (immediateBitSet(encodedInstruction))
@@ -504,7 +517,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister(op1) + returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister(op1) + returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			storInstructions++;
@@ -515,8 +528,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "mov " + returnRegister(destination);
 			if (immediateBitSet(encodedInstruction))
@@ -537,7 +550,7 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "push ";
 			if (immediateBitSet(encodedInstruction))
@@ -556,7 +569,7 @@ namespace Decoder
 		}
 		private string CreatePOPInstruction(ushort encodedInstruction)
 		{
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
 
 			string retValue = "pop " + returnRegister(destination);
 			popInstructions++;
@@ -567,8 +580,8 @@ namespace Decoder
 
 		private string CreateCMPInstruction(ushort encodedInstruction)
 		{
-			byte op1 = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op2 = (byte)(encodedInstruction & Arith1RegOP);
+			byte op1 = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op2 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "cmp " + returnRegister(op1) + returnRegister(op2);
 			cmpInstructions++;
@@ -661,7 +674,7 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte immediate20 = (byte)(encodedInstruction & Arith1RegOP);
+			byte immediate20 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "lda ";
 			retValue += "#" + ((int)(immediate20 << 16 | temp));
@@ -670,13 +683,12 @@ namespace Decoder
 			immediateInstructions++;
 			return retValue;
 		}
-
 		private string CreateNEGInstruction(ushort encodedInstruction)
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "neg " + returnRegister(destination);
 			if (immediateBitSet(encodedInstruction))
@@ -697,8 +709,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "xor " + returnRegister(destination) + returnRegister(op1);
 			if (immediateBitSet(encodedInstruction))
@@ -708,7 +720,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			xorInstructions++;
@@ -719,8 +731,8 @@ namespace Decoder
 		{
 			byte[] bytes = br.ReadBytes(2);
 			ushort temp = (ushort)(bytes[1] << 8 | bytes[2]);
-			byte destination = (byte)((uint)(encodedInstruction & DestRegMask) >> 4);
-			byte op1 = (byte)(encodedInstruction & Arith1RegOP);
+			byte destination = (byte)((uint)(encodedInstruction & 0x00F0) >> 4);
+			byte op1 = (byte)(encodedInstruction & 0x000F);
 
 			string retValue = "sub " + returnRegister(destination) + returnRegister(op1);
 			if (immediateBitSet(encodedInstruction))
@@ -730,7 +742,7 @@ namespace Decoder
 			}
 			else
 			{
-				retValue += returnRegister((byte)(temp & RegOP2));
+				retValue += returnRegister((byte)(temp & 0x000F));
 				registerInstructions++;
 			}
 			subInstructions++;
@@ -765,7 +777,7 @@ namespace Decoder
 		{
 			return Convert.ToBoolean(EncodedInstruction & ImmediateIdentifierMask);
 		}
-		string returnRegister(byte number)
+		private string returnRegister(byte number)
 		{
 			switch (number)
 			{
@@ -806,9 +818,44 @@ namespace Decoder
 			}
 		}
 
-		void summaryStats()
+		private string summaryStats()
 		{
+			StringBuilder sb = new StringBuilder();
+			sb.AppendLine("\n\nSummary Statistics\n");
+			sb.AppendLine("------------------\n");
+			sb.AppendLine("Total instructions:\t\t" + totalInstructions + "\n");
+			sb.AppendLine("Add instructions:\t\t" + addInstructions + "\n");
+			sb.AppendLine("Addc Instructions:\t\t" + addcInstructions + "\n");
+			sb.AppendLine("Subb Instructions:\t\t" + subbInstructions + "\n");
+			sb.AppendLine("And Instructions:\t\t" + andInstructions + "\n");
+			sb.AppendLine("Or Instructions:\t\t" + orInstructions + "\n");
+			sb.AppendLine("Nor Instructions:\t\t" + norInstructions + "\n");
+			sb.AppendLine("Shl Instructions:\t\t" + shlInstructions + "\n");
+			sb.AppendLine("Shr Instructions:\t\t" + shrInstructions + "\n");
+			sb.AppendLine("Shar Instructions:\t\t" + sharInstructions + "\n");
+			sb.AppendLine("Ror Instructions:\t\t" + rorInstructions + "\n");
+			sb.AppendLine("Rol Instructions:\t\t" + rolInstructions + "\n");
+			sb.AppendLine("Rorc Instructions:\t\t" + rorcInstructions + "\n");
+			sb.AppendLine("Rolc Instructions:\t\t" + rolcInstructions + "\n");
+			sb.AppendLine("Load Instructions:\t\t" + loadInstructions + "\n");
+			sb.AppendLine("Stor Instructions:\t\t" + storInstructions + "\n");
+			sb.AppendLine("Mov Instructions:\t\t" + movInstructions + "\n");
+			sb.AppendLine("Push Instructions:\t\t" + pushInstructions + "\n");
+			sb.AppendLine("Pop Instructions:\t\t" + popInstructions + "\n");
+			sb.AppendLine("Cmp Instructions:\t\t" + cmpInstructions + "\n");
+			sb.AppendLine("Jump Instructions:\t\t" + jumpInstructions + "\n");
+			sb.AppendLine("Lda Instructions:\t\t" + ldaInstructions + "\n");
+			sb.AppendLine("Neg Instructions:\t\t" + negInstructions + "\n");
+			sb.AppendLine("Halt Instructions:\t\t" + haltInstructions + "\n");
+			sb.AppendLine("Sub Instructions:\t\t" + subInstructions + "\n");
+			sb.AppendLine("Xor Instructions:\t\t" + xorInstructions + "\n\n");
+			sb.AppendLine("Addressing Mode Uses\n");
+			sb.AppendLine("Immediate Instructions:\t\t" + immediateInstructions + "\n");
+			sb.AppendLine("Register Instructions:\t\t" + registerInstructions + "\n");
+			sb.AppendLine("Nop Instructions:\t\t" + nopInstructions + "\n");
+			sb.AppendLine("Control Instructions:\t\t" + controlInstructions + "\n");
 
+			return sb.ToString();
 		}
 
 	}
