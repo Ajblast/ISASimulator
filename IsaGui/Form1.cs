@@ -40,9 +40,11 @@ namespace IsaGui
             ALU1Box.Text = Convert.ToString(simCpu.alu.dest.Value, 2);
             ALU2Box.Text = Convert.ToString(simCpu.alu.op1.Value, 2);
             ALU3Box.Text = Convert.ToString(simCpu.alu.op2.Value, 2);
+
             PCBox.Text = Convert.ToString(simCpu.registers.PC1.Value, 2);
             SP1Box.Text = Convert.ToString(simCpu.registers.SP1.Value, 2);
             SP2Box.Text = Convert.ToString(simCpu.registers.SP2.Value, 2);
+
             rABox.Text = Convert.ToString(simCpu.registers[0].Value, 2);
             rBBox.Text = Convert.ToString(simCpu.registers[1].Value, 2);
             rCBox.Text = Convert.ToString(simCpu.registers[2].Value, 2);
@@ -54,6 +56,7 @@ namespace IsaGui
             rIBox.Text = Convert.ToString(simCpu.registers[8].Value, 2);
             rJBox.Text = Convert.ToString(simCpu.registers[9].Value, 2);
             rKBox.Text = Convert.ToString(simCpu.registers[10].Value, 2);
+
             sBox.Text = Convert.ToString((((uint)simCpu.registers.FLAG.Value & 0x0010) >> 4), 2);
             oBox.Text = Convert.ToString((((uint)simCpu.registers.FLAG.Value & 0x0008) >> 3), 2);
             eqBox.Text = Convert.ToString((((uint)simCpu.registers.FLAG.Value & 0x0004) >> 2), 2);
