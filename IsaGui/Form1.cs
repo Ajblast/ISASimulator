@@ -19,6 +19,7 @@ namespace IsaGui
         private string assemblyFilePath;
         private string binaryInFilePath;
         private Simulator.Encoder binaryEncoder;
+        private int StepCounter = 0;
         public Form1()
         {
             simMemory = new Memory(0x100000, true);
@@ -31,8 +32,15 @@ namespace IsaGui
 
         private void StepButton_Click(object sender, EventArgs e)
         {
+            if (simCpu.halt.Value != 0)
+                return;
             simCpu.RunClockCycle();
             updateRegisters();
+            StepCounter++;
+            if (StepCounter < assemblyBox.Items.Count)
+            {
+                assemblyBox.SelectedIndex = StepCounter;
+            }
         }
 
         private void updateRegisters()
@@ -69,9 +77,11 @@ namespace IsaGui
             openFileDialog.InitialDirectory = System.IO.Path.GetFullPath(CombinedPath);
             if (openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
-
+            StepCounter = 0;
             binaryInFilePath = openFileDialog.FileName;
             InstallBinary(binaryInFilePath);
+            assemblyBox.SelectedIndex = StepCounter;
+            simCpu.halt.Value = 0;
         }
 
         private void openAssemblyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -82,6 +92,7 @@ namespace IsaGui
             openFileDialog.InitialDirectory = System.IO.Path.GetFullPath(CombinedPath);
             if (openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
+            StepCounter = 0;
             //Load into assembly list box
             assemblyBox.Items.Clear();
             assemblyFilePath = openFileDialog.FileName;
@@ -90,12 +101,15 @@ namespace IsaGui
             string pulledLine;
             while ((pulledLine = streamReader.ReadLine()) != null)
             {
-                assemblyBox.Items.Add(pulledLine);
+                if( string.IsNullOrEmpty(pulledLine) == false && pulledLine[0] != '/')
+                    assemblyBox.Items.Add(pulledLine);
             }
             assemblyBox.EndUpdate();
              binaryEncoder = new Simulator.Encoder(assemblyFilePath);
             binaryEncoder.EncodeFile();
             InstallBinary(assemblyFilePath.Replace(".txt",".bin"));
+            assemblyBox.SelectedIndex = StepCounter;
+            simCpu.halt.Value = 0;
         }
 
         private void InstallBinary(string binaryInFilePath)

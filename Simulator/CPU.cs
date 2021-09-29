@@ -29,6 +29,8 @@ namespace Simulator
 
 			// Create the executor
 			executor = new Executor();
+
+			halt.Value = 1;
 		}
 
 		// Run a clock cycle
