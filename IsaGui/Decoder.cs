@@ -852,10 +852,10 @@ namespace Decoder
 			sb.AppendLine("Sub Instructions:\t\t" + subInstructions + "\n");
 			sb.AppendLine("Xor Instructions:\t\t" + xorInstructions + "\n\n");
 			sb.AppendLine("Addressing Mode Uses\n");
-			sb.AppendLine("Immediate Instructions:\t\t" + immediateInstructions + "\n");
-			sb.AppendLine("Register Instructions:\t\t" + registerInstructions + "\n");
+			sb.AppendLine("Immediate Instructions:\t" + immediateInstructions + "\n");
+			sb.AppendLine("Register Instructions:\t" + registerInstructions + "\n");
 			sb.AppendLine("Nop Instructions:\t\t" + nopInstructions + "\n");
-			sb.AppendLine("Control Instructions:\t\t" + controlInstructions + "\n");
+			sb.AppendLine("Control Instructions:\t" + controlInstructions + "\n");
 
 			return sb.ToString();
 		}
