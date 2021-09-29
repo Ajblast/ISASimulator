@@ -40,7 +40,7 @@ namespace Simulator
                                                         //list holds the address of the label
         List<int> labelPositions;                       //This holds all of the positions of labels that are initialized in the remix file, the string in the same position in the
                                                         //labels list holds the corresponding label.
-        List<int> inLengths;                            //This list holds the length of every line (instruction or not) in the remix file in bits. If a line holds a label, the corresponding
+        public List<int> inLengths;                            //This list holds the length of every line (instruction or not) in the remix file in bits. If a line holds a label, the corresponding
                                                         //value in inLengths will be -1
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace Simulator
                 if (arr[0].Equals("jmp"))   //jmp is the only macro currently present in our ISA, it expands out to the commands below
                 {
                     sw.WriteLine("lda " + arr[1]);
-                    sw.WriteLine("cmp rA, rA");
+                    sw.WriteLine("cmp rA rA");
                     sw.WriteLine("jz");
                 }
                 else
@@ -305,7 +305,7 @@ namespace Simulator
                 }
                 else                                                        //If we haven't come across a label then we just add to the counter and keep moving
                 {
-                    counter += inLengths[i];
+                    counter += inLengths[i] / 8;
                 }
             }
             sr.Close();
@@ -334,12 +334,12 @@ namespace Simulator
                 else if (inLengths[i] == 16)
                 {
                     ushort temp = Build16BitIn(input);
-                    bw.Write((byte)((temp & 0x00FF)));
                     bw.Write((byte)((temp & 0xFF00) >> 8));
+                    bw.Write((byte)((temp & 0x00FF)));
                 }
             }
             sr.Close();
-            bw.Close();
+            bw.Close();           
         }
 
         /// <summary>

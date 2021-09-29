@@ -19,15 +19,11 @@ namespace IsaGui
         private string assemblyFilePath;
         private string binaryInFilePath;
         private Simulator.Encoder binaryEncoder;
-        private int StepCounter = 0;
+        private Dictionary<int, int> InstructionMemAddrToGUIIndex = new Dictionary<int,int>();
         public Form1()
         {
-            simMemory = new Memory(0x100000, true);
-            simCpu = new CPU(simMemory);
-            simCpu.registers.SP1.Value = 0xF;
-            simCpu.registers.SP2.Value = 0xFFFE;
             InitializeComponent();
-            updateRegisters();
+            remakeCPU();
         }
 
         private void StepButton_Click(object sender, EventArgs e)
@@ -36,11 +32,15 @@ namespace IsaGui
                 return;
             simCpu.RunClockCycle();
             updateRegisters();
-            StepCounter++;
-            if (StepCounter < assemblyBox.Items.Count)
+            if (InstructionMemAddrToGUIIndex.ContainsKey(((simCpu.registers.PC1.Value & 0xF) << 16) | simCpu.registers.PC2.Value) == false)
             {
-                assemblyBox.SelectedIndex = StepCounter;
+                MessageBox.Show("Trying to execute instruction outside of known instructions. Halting", "The OS is mad", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                simCpu.halt.Value = 1;
+                return;
             }
+
+            if (InstructionMemAddrToGUIIndex.Count != 0)
+                assemblyBox.SelectedIndex = InstructionMemAddrToGUIIndex[((simCpu.registers.PC1.Value & 0xF) << 16) | simCpu.registers.PC2.Value];
         }
 
         private void updateRegisters()
@@ -49,6 +49,7 @@ namespace IsaGui
             ALU2Box.Text = Convert.ToString(simCpu.alu.op1.Value, 2);
             ALU3Box.Text = Convert.ToString(simCpu.alu.op2.Value, 2);
             PCBox.Text = Convert.ToString(simCpu.registers.PC1.Value, 2);
+            PC2Box.Text = Convert.ToString(simCpu.registers.PC2.Value, 2);
             SP1Box.Text = Convert.ToString(simCpu.registers.SP1.Value, 2);
             SP2Box.Text = Convert.ToString(simCpu.registers.SP2.Value, 2);
             rABox.Text = Convert.ToString(simCpu.registers[0].Value, 2);
@@ -71,32 +72,48 @@ namespace IsaGui
 
         private void openBinaryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            assemblyFilePath = null;
             OpenFileDialog openFileDialog = new OpenFileDialog();
             string CombinedPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "..");
             openFileDialog.InitialDirectory = System.IO.Path.GetFullPath(CombinedPath);
             if (openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
-            StepCounter = 0;
+
+            remakeCPU();
+            assemblyBox.Items.Clear();
+            InstructionMemAddrToGUIIndex.Clear();
+            assemblyFilePath = null;
+
             binaryInFilePath = openFileDialog.FileName;
             InstallBinary(binaryInFilePath);
-            assemblyBox.SelectedIndex = StepCounter;
             simCpu.halt.Value = 0;
+            fixMemAddrToGUIIndex();
+            if (InstructionMemAddrToGUIIndex.Count != 0)
+                assemblyBox.SelectedIndex = InstructionMemAddrToGUIIndex[((simCpu.registers.PC1.Value & 0xF) << 16) | simCpu.registers.PC2.Value];
         }
 
         private void openAssemblyToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            assemblyBox.Items.Clear();
+            InstructionMemAddrToGUIIndex.Clear();
             binaryInFilePath = null;
             OpenFileDialog openFileDialog = new OpenFileDialog();
             string CombinedPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "..");
             openFileDialog.InitialDirectory = System.IO.Path.GetFullPath(CombinedPath);
             if (openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
-            StepCounter = 0;
-            //Load into assembly list box
+
+            remakeCPU();
             assemblyBox.Items.Clear();
+            InstructionMemAddrToGUIIndex.Clear();
+            binaryInFilePath = null;
+
+            //Load into assembly list box
             assemblyFilePath = openFileDialog.FileName;
-            var fileStream = File.OpenRead(assemblyFilePath);
+
+            binaryEncoder = new Simulator.Encoder(assemblyFilePath);
+            binaryEncoder.EncodeFile();
+
+            var fileStream = File.OpenRead(assemblyFilePath.Replace(".txt", ".remix"));
             var streamReader = new StreamReader(fileStream);
             string pulledLine;
             while ((pulledLine = streamReader.ReadLine()) != null)
@@ -105,17 +122,19 @@ namespace IsaGui
                     assemblyBox.Items.Add(pulledLine);
             }
             assemblyBox.EndUpdate();
-             binaryEncoder = new Simulator.Encoder(assemblyFilePath);
-            binaryEncoder.EncodeFile();
+            fileStream.Close();
+
             InstallBinary(assemblyFilePath.Replace(".txt",".bin"));
-            assemblyBox.SelectedIndex = StepCounter;
             simCpu.halt.Value = 0;
+            fixMemAddrToGUIIndex();
+            if (InstructionMemAddrToGUIIndex.Count != 0)
+                assemblyBox.SelectedIndex = InstructionMemAddrToGUIIndex[((simCpu.registers.PC1.Value & 0xF) << 16) | simCpu.registers.PC2.Value];
         }
 
         private void InstallBinary(string binaryInFilePath)
         {
             byte[] array = File.ReadAllBytes(binaryInFilePath);
-
+            
             for (int i = 0; i < array.Length - 1; i = i + 2)
             {
                 ushort pulledShort = (ushort)(array[i] << 8 | array[i + 1]);
@@ -133,6 +152,30 @@ namespace IsaGui
             }
 
             BinaryTextBox.Text = hexString;
+        }
+
+        private void fixMemAddrToGUIIndex()
+        {
+            InstructionMemAddrToGUIIndex.Clear();
+            int curMemAddress = 0;
+            //InstructionMemAddrToGUIIndex
+            for (int i = 0; i < binaryEncoder.inLengths.Count; i++)
+            {
+                if (binaryEncoder.inLengths[i] == -1)
+                    continue;
+
+                InstructionMemAddrToGUIIndex.Add(curMemAddress, i);
+                curMemAddress += binaryEncoder.inLengths[i] / 8;
+            }
+        }
+
+        private void remakeCPU()
+        {
+            simMemory = new Memory(0x100000, true);
+            simCpu = new CPU(simMemory);
+            simCpu.registers.SP1.Value = 0xF;
+            simCpu.registers.SP2.Value = 0xFFFE;
+            updateRegisters();
         }
     }
 }
