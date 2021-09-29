@@ -95,7 +95,7 @@ namespace IsaGui
             assemblyBox.EndUpdate();
              binaryEncoder = new Simulator.Encoder(assemblyFilePath);
             binaryEncoder.EncodeFile();
-            InstallBinary(assemblyFilePath + "Bin");
+            InstallBinary(assemblyFilePath.Replace(".txt",".bin"));
         }
 
         private void InstallBinary(string binaryInFilePath)
