@@ -101,6 +101,7 @@ namespace IsaGui
             FeedInAssembly();
 
             InstallBinaryAndFixGUI();
+            statsButton.Enabled = true;
         }
 
         private void openAssemblyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -127,6 +128,7 @@ namespace IsaGui
             FeedInAssembly();
 
             InstallBinaryAndFixGUI();
+            statsButton.Enabled = true;
         }
 
         private void ResetGUI()
@@ -206,6 +208,34 @@ namespace IsaGui
             simCpu.registers.SP1.Value = 0xF;
             simCpu.registers.SP2.Value = 0xFFFE;
             updateRegisters();
+        }
+
+        private void RunButton_Click(object sender, EventArgs e)
+        {
+            while (simCpu.halt.Value == 0)
+            {
+                simCpu.RunClockCycle();
+                if (InstructionMemAddrToGUIIndex.ContainsKey(((simCpu.registers.PC1.Value & 0xF) << 16) | simCpu.registers.PC2.Value) == false)
+                {
+                    MessageBox.Show("Trying to execute instruction outside of known instructions. Halting", "The OS is mad", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    simCpu.halt.Value = 1;
+                    continue;
+                }
+
+                if (InstructionMemAddrToGUIIndex.Count != 0)
+                    assemblyBox.SelectedIndex = InstructionMemAddrToGUIIndex[((simCpu.registers.PC1.Value & 0xF) << 16) | simCpu.registers.PC2.Value];
+            }
+            updateRegisters();
+        }
+
+        private void StopButton_Click(object sender, EventArgs e)
+        {
+            simCpu.halt.Value = 1;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(textDecoder.DecodedStats());
         }
     }
 }

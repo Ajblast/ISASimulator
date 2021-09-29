@@ -39,7 +39,6 @@ namespace IsaGui
             this.openAssemblyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StepButton = new System.Windows.Forms.Button();
             this.RunButton = new System.Windows.Forms.Button();
-            this.RecompileButton = new System.Windows.Forms.Button();
             this.FlagLabel = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -86,9 +85,9 @@ namespace IsaGui
             this.label23 = new System.Windows.Forms.Label();
             this.label24 = new System.Windows.Forms.Label();
             this.StopButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.rDBox = new System.Windows.Forms.TextBox();
             this.rDLabel = new System.Windows.Forms.Label();
+            this.statsButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -181,22 +180,13 @@ namespace IsaGui
             // RunButton
             // 
             this.RunButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RunButton.Location = new System.Drawing.Point(133, 39);
+            this.RunButton.Location = new System.Drawing.Point(126, 39);
             this.RunButton.Name = "RunButton";
             this.RunButton.Size = new System.Drawing.Size(75, 38);
             this.RunButton.TabIndex = 6;
             this.RunButton.Text = "Run";
             this.RunButton.UseVisualStyleBackColor = true;
-            // 
-            // RecompileButton
-            // 
-            this.RecompileButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RecompileButton.Location = new System.Drawing.Point(322, 39);
-            this.RecompileButton.Name = "RecompileButton";
-            this.RecompileButton.Size = new System.Drawing.Size(176, 37);
-            this.RecompileButton.TabIndex = 7;
-            this.RecompileButton.Text = "Recompile Assembly";
-            this.RecompileButton.UseVisualStyleBackColor = true;
+            this.RunButton.Click += new System.EventHandler(this.RunButton_Click);
             // 
             // FlagLabel
             // 
@@ -585,22 +575,13 @@ namespace IsaGui
             // StopButton
             // 
             this.StopButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.StopButton.Location = new System.Drawing.Point(224, 39);
+            this.StopButton.Location = new System.Drawing.Point(217, 39);
             this.StopButton.Name = "StopButton";
             this.StopButton.Size = new System.Drawing.Size(75, 38);
             this.StopButton.TabIndex = 58;
             this.StopButton.Text = "Stop";
             this.StopButton.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(516, 39);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(146, 38);
-            this.button1.TabIndex = 59;
-            this.button1.Text = "Recompile Binary";
-            this.button1.UseVisualStyleBackColor = true;
+            this.StopButton.Click += new System.EventHandler(this.StopButton_Click);
             // 
             // rDBox
             // 
@@ -619,6 +600,18 @@ namespace IsaGui
             this.rDLabel.TabIndex = 61;
             this.rDLabel.Text = "rD";
             // 
+            // statsButton
+            // 
+            this.statsButton.Enabled = false;
+            this.statsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.statsButton.Location = new System.Drawing.Point(308, 39);
+            this.statsButton.Name = "statsButton";
+            this.statsButton.Size = new System.Drawing.Size(75, 38);
+            this.statsButton.TabIndex = 62;
+            this.statsButton.Text = "Stats";
+            this.statsButton.UseVisualStyleBackColor = true;
+            this.statsButton.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -626,9 +619,9 @@ namespace IsaGui
             this.AutoScroll = true;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(1337, 608);
+            this.Controls.Add(this.statsButton);
             this.Controls.Add(this.rDLabel);
             this.Controls.Add(this.rDBox);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.StopButton);
             this.Controls.Add(this.label24);
             this.Controls.Add(this.label23);
@@ -675,7 +668,6 @@ namespace IsaGui
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.FlagLabel);
-            this.Controls.Add(this.RecompileButton);
             this.Controls.Add(this.RunButton);
             this.Controls.Add(this.StepButton);
             this.Controls.Add(this.label2);
@@ -703,7 +695,6 @@ namespace IsaGui
         private System.Windows.Forms.ToolStripMenuItem openAssemblyToolStripMenuItem;
         private System.Windows.Forms.Button StepButton;
         private System.Windows.Forms.Button RunButton;
-        private System.Windows.Forms.Button RecompileButton;
         private System.Windows.Forms.Label FlagLabel;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
@@ -750,10 +741,10 @@ namespace IsaGui
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.Button StopButton;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox rDBox;
         private System.Windows.Forms.Label rDLabel;
         public System.Windows.Forms.ListBox assemblyBox;
+        private System.Windows.Forms.Button statsButton;
     }
 }
 

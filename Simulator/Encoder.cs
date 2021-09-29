@@ -54,9 +54,6 @@ namespace Simulator
             remixFilePath = filePath.Replace(".txt", ".remix");
             binFilePath = filePath.Replace(".txt", ".bin"); ;
 
-            sr = new StreamReader(txtFilePath);
-            sw = new StreamWriter(remixFilePath);
-
             labels = new List<string>();
             labelPositions = new List<int>();
             inLengths = new List<int>();
