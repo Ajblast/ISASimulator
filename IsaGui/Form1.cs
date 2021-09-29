@@ -21,6 +21,7 @@ namespace IsaGui
         private Simulator.Encoder binaryEncoder;
         private Dictionary<int, int> InstructionMemAddrToGUIIndex = new Dictionary<int,int>();
         private Decoder.Decoder textDecoder;
+
         public Form1()
         {
             InitializeComponent();
@@ -83,27 +84,23 @@ namespace IsaGui
                 return;
 
             remakeCPU();
-            assemblyBox.Items.Clear();
-            InstructionMemAddrToGUIIndex.Clear();
-            assemblyFilePath = null;
+            ResetGUI();
 
             binaryInFilePath = openFileDialog.FileName;
-            InstallBinary(binaryInFilePath);
             textDecoder = new Decoder.Decoder(binaryInFilePath);
             string assemblyText = textDecoder.DecodedFile();
 
             StreamWriter sw = new StreamWriter(binaryInFilePath.Replace(".bin", ".sht"));
             sw.Write(assemblyText);
             sw.Close();
-            binaryEncoder.ChangeFiles(binaryInFilePath.Replace(".bin", ".sht"));
+
+            assemblyFilePath = binaryInFilePath.Replace(".bin", ".txt");
+            binaryEncoder.ChangeFiles(assemblyFilePath);
             binaryEncoder.EncodeFile();
 
             FeedInAssembly();
 
-            simCpu.halt.Value = 0;
-            fixMemAddrToGUIIndex();
-            if (InstructionMemAddrToGUIIndex.Count != 0)
-                assemblyBox.SelectedIndex = InstructionMemAddrToGUIIndex[((simCpu.registers.PC1.Value & 0xF) << 16) | simCpu.registers.PC2.Value];
+            InstallBinaryAndFixGUI();
         }
 
         private void openAssemblyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -118,26 +115,27 @@ namespace IsaGui
                 return;
 
             remakeCPU();
-            assemblyBox.Items.Clear();
-            InstructionMemAddrToGUIIndex.Clear();
-            binaryInFilePath = null;
-
+            ResetGUI();
 
             //Load into assembly list box
             assemblyFilePath = openFileDialog.FileName;
 
             binaryEncoder = new Simulator.Encoder(assemblyFilePath);
-            binaryEncoder.EncodeFile();
+            binaryInFilePath = binaryEncoder.EncodeFile();
+            textDecoder = new Decoder.Decoder(binaryInFilePath);
 
             FeedInAssembly();
 
-            InstallBinary(assemblyFilePath.Replace(".txt",".bin"));
-            simCpu.halt.Value = 0;
-            fixMemAddrToGUIIndex();
-            if (InstructionMemAddrToGUIIndex.Count != 0)
-                assemblyBox.SelectedIndex = InstructionMemAddrToGUIIndex[((simCpu.registers.PC1.Value & 0xF) << 16) | simCpu.registers.PC2.Value];
+            InstallBinaryAndFixGUI();
         }
 
+        private void ResetGUI()
+        {
+            assemblyBox.Items.Clear();
+            InstructionMemAddrToGUIIndex.Clear();
+            assemblyFilePath = null;
+
+        }
         private void FeedInAssembly()
         {
             var fileStream = File.OpenRead(assemblyFilePath.Replace(".txt", ".remix"));
@@ -151,6 +149,16 @@ namespace IsaGui
 
             assemblyBox.EndUpdate();
             fileStream.Close();
+        }
+
+
+        private void InstallBinaryAndFixGUI()
+        {
+            InstallBinary(assemblyFilePath.Replace(".txt", ".bin"));
+            simCpu.halt.Value = 0;
+            fixMemAddrToGUIIndex();
+            if (InstructionMemAddrToGUIIndex.Count != 0)
+                assemblyBox.SelectedIndex = InstructionMemAddrToGUIIndex[((simCpu.registers.PC1.Value & 0xF) << 16) | simCpu.registers.PC2.Value];
         }
 
         private void InstallBinary(string binaryInFilePath)
