@@ -123,7 +123,16 @@ namespace IsaGui
             }
 
             string hexString = BitConverter.ToString(array);
-            BinaryTextBox.Text = hexString.Replace("-", " ");
+            hexString = hexString.Replace("-", "");
+
+            int j = 4;
+            while (j < hexString.Length)
+            {
+                hexString = hexString.Insert(j, " ");
+                j += 5;
+            }
+
+            BinaryTextBox.Text = hexString;
         }
     }
 }
