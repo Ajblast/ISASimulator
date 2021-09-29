@@ -325,16 +325,16 @@ namespace Simulator
                 if (inLengths[i] == 32)
                 {
                     uint temp = Build32BitIn(input);
-                    bw.Write((byte)((temp & 0xF000) >> 24));
-                    bw.Write((byte)((temp & 0x0F00) >> 16));
-                    bw.Write((byte)((temp & 0x00F0) >> 8));
-                    bw.Write((byte)((temp & 0x000F)));
+                    bw.Write((byte)((temp & 0xFF000000) >> 24));
+                    bw.Write((byte)((temp & 0x00FF0000) >> 16));
+                    bw.Write((byte)((temp & 0x0000FF00) >> 8));
+                    bw.Write((byte)((temp & 0x000000FF)));
                 }
                 else if (inLengths[i] == 16)
                 {
                     ushort temp = Build16BitIn(input);
-                    bw.Write((byte)((temp & 0x0F)));
-                    bw.Write((byte)((temp & 0xF0) >> 8));
+                    bw.Write((byte)((temp & 0x00FF)));
+                    bw.Write((byte)((temp & 0xFF00) >> 8));
                 }
             }
             sr.Close();
