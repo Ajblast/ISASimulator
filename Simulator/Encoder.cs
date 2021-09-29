@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.Collections;
 using System.Runtime.InteropServices;
 
-namespace CAProjectEncoder
+namespace Simulator
 {
     
     
@@ -16,7 +16,7 @@ namespace CAProjectEncoder
     /// Encoder
     /// This class will encode a file of commands written in team 5's ISA into the binary equivalents written in our ISA
     /// </summary>
-    class Encoder
+    public class Encoder
     {
         Dictionary<string, int> inDicSize;              //This is a dictionary that will uses the name of an instruction as a key, the value is the size of that command
                                                         //0 is used as a size placeholder for hybrid commands
@@ -47,6 +47,7 @@ namespace CAProjectEncoder
         /// Initializes a new instance of the <see cref="Encoder"/> class.
         /// </summary>
         /// <param name="filePath">The file path to the instruction file.</param>
+        /// <param name="outputPath">The file path the binary file will go.</param>
         public Encoder(string filePath)
         {
             txtFilePath = filePath;
@@ -162,7 +163,6 @@ namespace CAProjectEncoder
         {
             txtFilePath = filePath;
             remixFilePath = filePath + "Remix";
-            binFilePath = filePath + "Bin";
 
             labels = new List<string>();
             labelPositions = new List<int>();
@@ -324,11 +324,17 @@ namespace CAProjectEncoder
                 input = sr.ReadLine();
                 if (inLengths[i] == 32)
                 {
-                    bw.Write(Build32BitIn(input));
+                    uint temp = Build32BitIn(input);
+                    bw.Write((byte)((temp & 0xF000) >> 24));
+                    bw.Write((byte)((temp & 0x0F00) >> 16));
+                    bw.Write((byte)((temp & 0x00F0) >> 8));
+                    bw.Write((byte)((temp & 0x000F)));
                 }
                 else if (inLengths[i] == 16)
                 {
-                    bw.Write(Build16BitIn(input));
+                    ushort temp = Build16BitIn(input);
+                    bw.Write((byte)((temp & 0x0F)));
+                    bw.Write((byte)((temp & 0xF0) >> 8));
                 }
             }
             sr.Close();
@@ -545,12 +551,13 @@ namespace CAProjectEncoder
                 throw new Exception("Something went wrong in BuildByteArray2");
         }
 
-        
+        /*
         static void Main(string[] args)
         {
             Encoder x = new Encoder(@"\Users\isaia\source\repos\CAProjectEncoder\CAProjectEncoder\hello.txt");
             Console.WriteLine(x.EncodeFile());
 
         }
+        */
     }
 }

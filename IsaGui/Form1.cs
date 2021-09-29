@@ -16,8 +16,9 @@ namespace IsaGui
     {
         private Memory simMemory;
         private CPU simCpu;
-        private string binaryFilePath;
-        private string assembly;
+        private string assemblyFilePath;
+        private string binaryInFilePath;
+        private Simulator.Encoder binaryEncoder;
         public Form1()
         {
             simMemory = new Memory(0x100000, true);
@@ -62,14 +63,44 @@ namespace IsaGui
 
         private void openBinaryToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            assemblyFilePath = null;
             OpenFileDialog openFileDialog = new OpenFileDialog();
             string CombinedPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "..");
             openFileDialog.InitialDirectory = System.IO.Path.GetFullPath(CombinedPath);
             if (openFileDialog.ShowDialog() != DialogResult.OK)
                 return;
 
-            binaryFilePath = openFileDialog.FileName;
-            byte[] array = File.ReadAllBytes(binaryFilePath);
+            binaryInFilePath = openFileDialog.FileName;
+            InstallBinary(binaryInFilePath);
+        }
+
+        private void openAssemblyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            binaryInFilePath = null;
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string CombinedPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "..");
+            openFileDialog.InitialDirectory = System.IO.Path.GetFullPath(CombinedPath);
+            if (openFileDialog.ShowDialog() != DialogResult.OK)
+                return;
+            //Load into assembly list box
+            assemblyBox.Items.Clear();
+            assemblyFilePath = openFileDialog.FileName;
+            var fileStream = File.OpenRead(assemblyFilePath);
+            var streamReader = new StreamReader(fileStream);
+            string pulledLine;
+            while ((pulledLine = streamReader.ReadLine()) != null)
+            {
+                assemblyBox.Items.Add(pulledLine);
+            }
+            assemblyBox.EndUpdate();
+             binaryEncoder = new Simulator.Encoder(assemblyFilePath);
+            binaryEncoder.EncodeFile();
+            InstallBinary(assemblyFilePath + "Bin");
+        }
+
+        private void InstallBinary(string binaryInFilePath)
+        {
+            byte[] array = File.ReadAllBytes(binaryInFilePath);
 
             for (int i = 0; i < array.Length - 1; i = i + 2)
             {
@@ -78,15 +109,7 @@ namespace IsaGui
             }
 
             string hexString = BitConverter.ToString(array);
-            BinaryTextBox.Text = hexString.Replace("-", "");
-        }
-
-        private void openAssemblyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            simMemory[0] = 0b0000001100000000;
-            simMemory[2] = 0b0000000000000001;
-            simMemory[4] = 0b1111000000000000;
-                
+            BinaryTextBox.Text = hexString.Replace("-", " ");
         }
     }
 }
